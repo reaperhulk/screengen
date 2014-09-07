@@ -48,9 +48,6 @@ type Generator struct {
 
 // NewGenerator returns new generator of screenshots for the video file fn.
 func NewGenerator(fn string) (g *Generator, err error) {
-	C.av_log_set_level(C.AV_LOG_QUIET)
-	C.avcodec_register_all()
-	C.av_register_all()
 	avfCtx := C.avformat_alloc_context()
 	if C.avformat_open_input(&avfCtx, C.CString(fn), nil, nil) != 0 {
 		return nil, errors.New("can't open input stream")
@@ -183,4 +180,10 @@ func (g *Generator) Image(ts int64) (image.Image, error) {
 func (g *Generator) Close() error {
 	C.avformat_close_input(&g.avfContext)
 	return nil
+}
+
+func init() {
+	C.av_log_set_level(C.AV_LOG_QUIET)
+	C.avcodec_register_all()
+	C.av_register_all()
 }
