@@ -184,6 +184,5 @@ func (g *Generator) Close() error {
 
 func init() {
 	C.av_log_set_level(C.AV_LOG_QUIET)
-	C.avcodec_register_all()
 	C.av_register_all()
 }
