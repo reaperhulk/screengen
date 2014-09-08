@@ -48,7 +48,7 @@ type Generator struct {
 }
 
 // NewGenerator returns new generator of screenshots for the video file fn.
-func NewGenerator(fn string) (g *Generator, err error) {
+func NewGenerator(fn string) (_ *Generator, err error) {
 	avfCtx := C.avformat_alloc_context()
 	cfn := C.CString(fn)
 	defer C.free(unsafe.Pointer(cfn))
@@ -56,7 +56,7 @@ func NewGenerator(fn string) (g *Generator, err error) {
 		return nil, errors.New("can't open input stream")
 	}
 	defer func() {
-		if g == nil {
+		if err != nil {
 			C.avformat_close_input(&avfCtx)
 		}
 	}()
