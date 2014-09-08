@@ -17,6 +17,7 @@
 package screengen
 
 // #cgo LDFLAGS: -lavcodec -lavformat -lavutil -lswscale
+// #include <stdlib.h>
 // #include <libavcodec/avcodec.h>
 // #include <libavformat/avformat.h>
 // #include <libswscale/swscale.h>
@@ -49,7 +50,9 @@ type Generator struct {
 // NewGenerator returns new generator of screenshots for the video file fn.
 func NewGenerator(fn string) (g *Generator, err error) {
 	avfCtx := C.avformat_alloc_context()
-	if C.avformat_open_input(&avfCtx, C.CString(fn), nil, nil) != 0 {
+	cfn := C.CString(fn)
+	defer C.free(unsafe.Pointer(cfn))
+	if C.avformat_open_input(&avfCtx, cfn, nil, nil) != 0 {
 		return nil, errors.New("can't open input stream")
 	}
 	defer func() {
