@@ -5,9 +5,8 @@ A library for generating screenshots from video files.
 
 ## Installation
 
-    $ go get github.com/opennota/screengen
+    go get github.com/opennota/screengen
 
 ## License
 
 GNU LGPL v3+
-
