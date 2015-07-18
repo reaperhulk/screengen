@@ -38,6 +38,7 @@ type Generator struct {
 	Height          int     // Height of the video
 	Duration        int64   // Duration of the video in milliseconds
 	VideoCodec      string  // Name of the video codec
+	CodecName	string  // Readable/long name of the video Codec
 	FPS             float64 // Frames Per Second
 	numberOfStreams int
 	vStreamIndex    int
@@ -95,12 +96,14 @@ func NewGenerator(fn string) (_ *Generator, err error) {
 	fps := (float64(streams[vStreamIndex].r_frame_rate.num) /
 		float64(streams[vStreamIndex].r_frame_rate.den))
 	vCodecName := strings.ToUpper(C.GoString(vCodec.name))
-
+	vCodecHuman := strings.ToUpper(C.GoString(vCodec.long_name))
+	
 	return &Generator{
 		Width:           width,
 		Height:          height,
 		Duration:        duration,
 		VideoCodec:      vCodecName,
+		CodecName:       vCodecHuman,
 		numberOfStreams: numberOfStreams,
 		vStreamIndex:    vStreamIndex,
 		FPS:             fps,
