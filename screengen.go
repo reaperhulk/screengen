@@ -16,7 +16,7 @@
 // Screengen is a package for generating screenshots from video files.
 package screengen
 
-// #cgo LDFLAGS: -lavcodec -lavformat -lavutil -lswscale
+// #cgo pkg-config: libavcodec libavformat libavutil libswscale
 // #include <stdlib.h>
 // #include <libavcodec/avcodec.h>
 // #include <libavformat/avformat.h>
