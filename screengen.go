@@ -115,21 +115,21 @@ func NewGenerator(fn string) (_ *Generator, err error) {
 	aCodecHuman := C.GoString(aCodec.long_name)
 
 	return &Generator{
-		Width:           width,
-		Height:          height,
-		Duration:        duration,
-		VideoCodec:      vCodecName,
-		VideoCodecName:  vCodecHuman,
-		AudioCodec:      aCodecName,
-		AudioCodecName:  aCodecHuman,
-		numberOfStreams: numberOfStreams,
-		vStreamIndex:    vStreamIndex,
-		aStreamIndex:    aStreamIndex,
-		FPS:             fps,
-		Bitrate:         bitrate,
-		streams:         streams,
-		avfContext:      avfCtx,
-		avcContext:      avcCtx,
+		Width:              width,
+		Height:             height,
+		Duration:           duration,
+		VideoCodec:         vCodecName,
+		VideoCodecLongName: vCodecHuman,
+		AudioCodec:         aCodecName,
+		AudioCodecLongName: aCodecHuman,
+		numberOfStreams:    numberOfStreams,
+		vStreamIndex:       vStreamIndex,
+		aStreamIndex:       aStreamIndex,
+		FPS:                fps,
+		Bitrate:            bitrate,
+		streams:            streams,
+		avfContext:         avfCtx,
+		avcContext:         avcCtx,
 	}, nil
 }
 
