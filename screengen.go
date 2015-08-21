@@ -38,11 +38,11 @@ type Generator struct {
 	Height             int     // Height of the video
 	Duration           int64   // Duration of the video in milliseconds
 	VideoCodec         string  // Name of the video codec
-	VideoCodecLongName string  // Readable/long name of the video Codec
+	VideoCodecLongName string  // Readable/long name of the video codec
 	FPS                float64 // Frames Per Second
 	numberOfStreams    int
 	AudioCodec         string // Name of the audio codec
-	AudioCodecLongName string // readable/long name of the audio codec
+	AudioCodecLongName string // Readable/long name of the audio codec
 	vStreamIndex       int
 	aStreamIndex       int
 	Bitrate            int
