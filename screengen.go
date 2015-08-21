@@ -137,6 +137,7 @@ func NewGenerator(fn string) (_ *Generator, err error) {
 func (g *Generator) Image(ts int64) (image.Image, error) {
 	img := image.NewRGBA(image.Rect(0, 0, g.Width, g.Height))
 	frame := C.av_frame_alloc()
+	defer C.av_frame_free(&frame)
 	frameNum := C.av_rescale(
 		C.int64_t(ts),
 		C.int64_t(g.streams[g.vStreamIndex].time_base.den),
