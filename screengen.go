@@ -103,16 +103,16 @@ func NewGenerator(fn string) (_ *Generator, err error) {
 	vCodecName := strings.ToUpper(C.GoString(vCodec.name))
 	vCodecHuman := C.GoString(vCodec.long_name)
 
-	if aStreamIndex == -1 {
-		return nil, errors.New("no audio stream")
+	aCodecName := ""
+	aCodecHuman := ""
+	if aStreamIndex != -1 {
+		aacCtx := streams[aStreamIndex].codec
+		aCodec := C.avcodec_find_decoder(aacCtx.codec_id)
+		if aCodec != nil {
+			aCodecName = strings.ToUpper(C.GoString(aCodec.name))
+			aCodecHuman = C.GoString(aCodec.long_name)
+		}
 	}
-	aacCtx := streams[aStreamIndex].codec
-	aCodec := C.avcodec_find_decoder(aacCtx.codec_id)
-	if aCodec == nil {
-		return nil, errors.New("can't find decoder")
-	}
-	aCodecName := strings.ToUpper(C.GoString(aCodec.name))
-	aCodecHuman := C.GoString(aCodec.long_name)
 
 	return &Generator{
 		Width:              width,
