@@ -166,7 +166,7 @@ func (g *Generator) Image(ts int64) (image.Image, error) {
 			return nil, errors.New("can't decode frame")
 		}
 		C.av_free_packet(&pkt)
-		if frameFinished == 0 {
+		if frameFinished == 0 || pkt.dts < frameNum {
 			continue
 		}
 		ctx := C.sws_getContext(
