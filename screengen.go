@@ -200,6 +200,58 @@ func (g *Generator) Image(ts int64) (image.Image, error) {
 	return img, nil
 }
 
+
+func (g *Generator) NextFrame() (image.Image, error) {
+	img := image.NewRGBA(image.Rect(0, 0, g.Width, g.Height))
+	frame := C.av_frame_alloc()
+	var pkt C.struct_AVPacket
+	var frameFinished C.int
+	for C.av_read_frame(g.avfContext, &pkt) == 0 {
+		if int(pkt.stream_index) != g.vStreamIndex {
+			C.av_free_packet(&pkt)
+			continue
+		}
+		if C.avcodec_decode_video2(g.avcContext, frame, &frameFinished, &pkt) <= 0 {
+			C.av_free_packet(&pkt)
+			return nil, errors.New("can't decode frame")
+		}
+		C.av_free_packet(&pkt)
+		if frameFinished == 0 {
+			continue
+		}
+		ctx := C.sws_getContext(
+			C.int(g.Width),
+			C.int(g.Height),
+			g.avcContext.pix_fmt,
+			C.int(g.Width),
+			C.int(g.Height),
+			C.PIX_FMT_RGBA,
+			C.SWS_BICUBIC,
+			nil,
+			nil,
+			nil,
+		)
+		if ctx == nil {
+			return nil, errors.New("can't allocate scaling context")
+		}
+		srcSlice := (**C.uint8_t)(&frame.data[0])
+		srcStride := (*C.int)(&frame.linesize[0])
+		dst := (**C.uint8_t)(unsafe.Pointer(&img.Pix))
+		dstStride := (*C.int)(unsafe.Pointer(&[1]int{img.Stride}))
+		C.sws_scale(
+			ctx,
+			srcSlice,
+			srcStride,
+			C.int(0),
+			g.avcContext.height,
+			dst,
+			dstStride,
+		)
+		break
+	}
+	return img, nil
+}
+
 // Close closes the internal ffmpeg context.
 func (g *Generator) Close() error {
 	C.avformat_close_input(&g.avfContext)
