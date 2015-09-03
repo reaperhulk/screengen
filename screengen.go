@@ -201,7 +201,7 @@ func (g *Generator) Image(ts int64) (image.Image, error) {
 }
 
 
-func (g *Generator) NextFrame() (image.Image, error) {
+func (g *Generator) NextFrame() (image.Image, int64, error) {
 	img := image.NewRGBA(image.Rect(0, 0, g.Width, g.Height))
 	frame := C.av_frame_alloc()
 	var pkt C.struct_AVPacket
@@ -213,7 +213,7 @@ func (g *Generator) NextFrame() (image.Image, error) {
 		}
 		if C.avcodec_decode_video2(g.avcContext, frame, &frameFinished, &pkt) <= 0 {
 			C.av_free_packet(&pkt)
-			return nil, errors.New("can't decode frame")
+			return nil, 0, errors.New("can't decode frame")
 		}
 		C.av_free_packet(&pkt)
 		if frameFinished == 0 {
@@ -232,7 +232,7 @@ func (g *Generator) NextFrame() (image.Image, error) {
 			nil,
 		)
 		if ctx == nil {
-			return nil, errors.New("can't allocate scaling context")
+			return nil, 0, errors.New("can't allocate scaling context")
 		}
 		srcSlice := (**C.uint8_t)(&frame.data[0])
 		srcStride := (*C.int)(&frame.linesize[0])
@@ -249,7 +249,8 @@ func (g *Generator) NextFrame() (image.Image, error) {
 		)
 		break
 	}
-	return img, nil
+    timestamp := int64(C.av_frame_get_best_effort_timestamp(frame))
+	return img, timestamp, nil
 }
 
 // Close closes the internal ffmpeg context.
